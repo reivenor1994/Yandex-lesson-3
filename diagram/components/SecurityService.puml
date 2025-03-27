@@ -1,0 +1,27 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонента системы «Тёплый дом»
+
+Container_Boundary(SecurityService, "Security Service") {
+    Component(SecurityController, "Security Controller", "REST API", "Запросы управления безопасностью")
+    Component(GateService, "Gate Service", "Бизнес-логика", "Управление воротами")
+    Component(CameraService, "Camera Service", "Бизнес-логика", "Управление камерами")
+    Component(SecurityRepository, "Security Repository", "Data Access", "Работа с данными безопасности")
+}
+
+ContainerDb(SecurityDb, "Security Database", "PostgreSQL", "Данные с камер, состояние ворот")
+ContainerQueue(EventKafka, "Event Kafka", "Apache Kafka", "Хранение событий")
+ContainerQueue(NotificationKafka, "Notification Kafka", "Apache Kafka", "Хранение сообщений об уведомлениях")
+
+Rel(SecurityController, GateService, "Запросы управления воротами")
+Rel(SecurityController, CameraService, "Запросы управления камерами")
+Rel(GateService, SecurityRepository, "Сохранение/получение данных")
+Rel(CameraService, SecurityRepository, "Сохранение/получение данных")
+Rel(SecurityRepository, SecurityDb, "Чтение и запись данных камер и ворот")
+BiRel(EventKafka, CameraService, "Получение команды и отправка ответа о её выполнении")
+BiRel(EventKafka, GateService, "Получение команды и отправка ответа о её выполнении")
+Rel(SecurityService, NotificationKafka, "Публикация уведомлений")
+
+@enduml

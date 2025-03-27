@@ -1,0 +1,23 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонента системы «Тёплый дом»
+
+Container_Boundary(LightingService, "Lighting Service") {
+    Component(LightingController, "Light Controller", "REST API", "Запросы управления освещением")
+    Component(LightService, "Light Service", "Бизнес-логика", "Управление состоянием света")
+    Component(LightingRepository, "Lighting Repository", "Data Access", "Работа с данными освещения")
+}
+
+ContainerDb(LightingDb, "Lighting Database", "PostgreSQL", "Состояние светильников")
+ContainerQueue(EventKafka, "Event Kafka", "Apache Kafka", "Хранение событий")
+ContainerQueue(NotificationKafka, "Notification Kafka", "Apache Kafka", "Хранение сообщений об уведомлениях")
+
+Rel(LightingController, LightService, "Запросы управления освещением")
+Rel(LightService, LightingRepository, "Сохранение/получение данных")
+Rel(LightingRepository, LightingDb, "Чтение и запись данных освещения")
+BiRel(EventKafka, LightService, "Получение команды и отправка ответа о её выполнении")
+Rel(LightService, NotificationKafka, "Публикация уведомлений")
+
+@enduml

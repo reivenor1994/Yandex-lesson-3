@@ -1,0 +1,109 @@
+@startuml
+
+title ER-диаграмма системы "Тёплый дом"
+
+entity User {
+    * id : UUID <<PK>>
+    --
+    * username : varchar
+    * email : varchar
+    * password_hash : varchar
+    * phone : varchar
+    created_at : timestamp
+    updated_at : timestamp
+}
+
+entity Device {
+    * id : UUID <<PK>>
+    --
+    * user_id : UUID <<FK>>
+    * type : enum('CLIMATE','LIGHT','SECURITY')
+    * name : varchar
+    * serial_number : varchar
+    * ip_address : varchar
+    status : varchar
+    last_seen : timestamp
+}
+
+entity ClimateDevice {
+    * id : UUID <<PK>>
+    * device_id : UUID <<FK>>
+    --
+    current_temp : float
+    target_temp : float
+    mode : enum('HEAT','COOL','AUTO','OFF')
+    power_usage : float
+}
+
+entity LightDevice {
+    * id : UUID <<PK>>
+    * device_id : UUID <<FK>>
+    --
+    brightness : int
+    color_temp : int
+    is_on : boolean
+    power_usage : float
+}
+
+entity SecurityDevice {
+    * id : UUID <<PK>>
+    * device_id : UUID <<FK>>
+    --
+    device_type : enum('GATE','CAMERA','SENSOR')
+    status : varchar
+    last_activity : timestamp
+}
+
+entity Scenario {
+    * id : UUID <<PK>>
+    * user_id : UUID <<FK>>
+    --
+    * name : varchar
+    description : text
+    is_active : boolean
+    conditions : json
+    actions : json
+    created_at : timestamp
+}
+
+entity Telemetry {
+    * id : UUID <<PK>>
+    * device_id : UUID <<FK>>
+    --
+    * timestamp : timestamp
+    metrics : json
+    event_type : varchar
+}
+
+entity Notification {
+    * id : UUID <<PK>>
+    * user_id : UUID <<FK>>
+    --
+    * message : varchar
+    * type : enum('ALERT','INFO','WARNING')
+    * is_read : boolean
+    created_at : timestamp
+    read_at : timestamp
+}
+
+entity Payment {
+    * id : UUID <<PK>>
+    * user_id : UUID <<FK>>
+    --
+    amount : decimal
+    status : enum('PENDING','COMPLETED','FAILED')
+    payment_date : timestamp
+    subscription_type : varchar
+    expiry_date : timestamp
+}
+
+User ||--o{ Device : "owns"
+Device }|--|| ClimateDevice : "climate_data"
+Device }|--|| LightDevice : "light_data"
+Device }|--|| SecurityDevice : "security_data"
+User ||--o{ Scenario : "creates"
+Device ||--o{ Telemetry : "generates"
+User ||--o{ Notification : "receives"
+User ||--o{ Payment : "makes"
+
+@enduml

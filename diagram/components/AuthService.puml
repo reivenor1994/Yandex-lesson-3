@@ -1,0 +1,25 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонента системы «Тёплый дом»
+
+Container_Boundary(AuthService, "AuthService") {
+    Component(AuthController, "Auth Controller", "REST API", "Запросы аутентификации")
+    Component(UserService, "User Service", "Бизнес-логика", "Управление пользователями")
+    Component(SessionService, "Session Service", "Бизнес-логика", "Управление сессиями")
+    Component(RoleService, "Role Service", "Бизнес-логика", "Управление ролями и правами")
+    Component(AuthRepository, "Auth Repository", "Data Access", "Работа с данными пользователей")
+}
+
+ ContainerDb(AuthDb, "User Account Database", "PostgreSQL", "Данные пользователей")
+
+Rel(AuthController, UserService, "Регистрация/аутентификация")
+Rel(AuthController, SessionService, "Управление сессиями")
+Rel(AuthController, RoleService, "Проверка прав доступа")
+Rel(UserService, AuthRepository, "Сохранение/получение данных")
+Rel(SessionService, AuthRepository, "Сохранение сессий")
+Rel(RoleService, AuthRepository, "Получение ролей")
+Rel(AuthRepository, AuthDb, "Чтение и запись пользовательских данных")
+
+@enduml

@@ -1,0 +1,28 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонента системы «Тёплый дом»
+
+Container_Boundary(ClimateService, "Climate Service") {
+    Component(ClimateController, "Climate Controller", "REST API", "Запросы управления климатом")
+    Component(TemperatureService, "Temperature Service", "Бизнес-логика", "Управление температурой")
+    Component(HeatingService, "Heating Service", "Бизнес-логика", "Включение/выключение отопления")
+    Component(ClimateRepository, "Climate Repository", "Data Access", "Работа с данными климата")
+}
+
+ContainerDb(ClimateDb, "Climate Database", "PostgreSQL", "Данные температуры, хранение настроек")
+ContainerQueue(EventKafka, "Event Kafka", "Apache Kafka", "Хранение событий")
+ContainerQueue(NotificationKafka, "Notification Kafka", "Apache Kafka", "Хранение сообщений об уведомлениях")
+
+Rel(ClimateController, TemperatureService, "Запросы управления температурой")
+Rel(ClimateController, HeatingService, "Запросы управления отоплением")
+Rel(TemperatureService, ClimateRepository, "Сохранение/получение данных")
+Rel(HeatingService, ClimateRepository, "Сохранение/получение данных")
+Rel(ClimateRepository, ClimateDb, "Чтение и запись данных климат-контроля")
+BiRel(EventKafka, HeatingService, "Получение команды и отправка ответа о её выполнении")
+BiRel(EventKafka, TemperatureService, "Получение команды и отправка ответа о её выполнении")
+Rel(TemperatureService, NotificationKafka, "Публикация уведомлений")
+Rel(HeatingService, NotificationKafka, "Публикация уведомлений")
+
+@enduml

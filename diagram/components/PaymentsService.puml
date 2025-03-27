@@ -1,0 +1,24 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонента системы «Тёплый дом»
+
+Container_Boundary(PaymentsService, "Payments Service") {
+    Component(PaymentsController, "Payments Controller", "REST API", "Запросы управления платежами")
+    Component(PaymentProcessor, "Payment Processor", "Бизнес-логика", "Обработка платежей")
+    Component(PaymentsRepository, "Payments Repository", "Data Access", "Работа с данными платежей")
+}
+
+ContainerDb(PaymentsDb, "Payments Database", "PostgreSQL", "Данные о платежах")
+ContainerQueue(NotificationKafka, "Notification Kafka", "Apache Kafka", "Хранение сообщений об уведомлениях")
+System_Ext(PaymentSystem, "Payment System", "Обслуживание платежей")
+
+Rel(PaymentsController, PaymentProcessor, "Управление платежами")
+Rel(PaymentProcessor, PaymentsRepository, "Сохранение и получение данных")
+Rel(PaymentsRepository, PaymentsDb, "Чтение и запись платежей")
+Rel(PaymentProcessor, NotificationKafka, "Публикация уведомлений")
+
+Rel(PaymentProcessor, PaymentSystem, "Оплата подписки на систему", "HTTPS")
+
+@enduml
