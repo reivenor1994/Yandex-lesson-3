@@ -1,0 +1,22 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонентов системы «Тёплый дом»
+
+Container_Boundary(MonitoringService, "Monitoring Service") {
+    Component(MonitoringController, "Monitoring Controller", "REST API", "Запросы истории телеметрии")
+    Component(TelemetryService, "Telemetry Service", "Бизнес-логика", "Сбор данных")
+    Component(MonitoringRepository, "Monitoring Repository", "Data Access", "Работа с данными")
+}
+
+ContainerDb(MonitoringDb, "Monitoring Database", "PostgreSQL", "История состояния устройств")
+ContainerQueue(DebeziumKafka, "Debezium Kafka", "Apache Kafka", "Хранение сообщений об изменениях в БД")
+
+Rel(MonitoringController, TelemetryService, "Запросы данных")
+Rel(TelemetryService, MonitoringRepository, "Сохранение и получение телеметрии")
+Rel(MonitoringRepository, MonitoringDb, "Чтение и запись истории состояний устройств")
+
+Rel(DebeziumKafka, TelemetryService, "Получение изменений")
+
+@enduml

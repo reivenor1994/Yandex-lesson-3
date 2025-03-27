@@ -1,0 +1,27 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонентов системы «Тёплый дом»
+
+Container_Boundary(NotificationService, "Notification Service") {
+    Component(NotificationController, "Notification Controller", "REST API", "Запросы управления уведомлениями")
+    Component(NoticeService, "Notice Service", "Бизнес-логика", "Обработка событий")
+    Component(EmailService, "Email Service", "Адаптер", "Отправка email")
+    Component(PushService, "Push Service", "Адаптер", "Отправка push-уведомлений")
+    Component(SmsService, "Sms Service", "Адаптер", "Отправка sms-уведомлений")
+    Component(NoticeRepository, "Notice Repository", "Data Access", "Работа с данными уведомлений")
+}
+
+ContainerDb(NotificationDb, "Notification Database", "PostgreSQL", "Данные об уведомлениях")
+ContainerQueue(NotificationKafka, "Notification Kafka", "Apache Kafka", "Хранение сообщений об уведомлениях")
+
+Rel(NotificationController, NoticeService, "Запросы уведомлений")
+Rel(NoticeService, EmailService, "Отправка email")
+Rel(NoticeService, PushService, "Отправка push")
+Rel(NoticeService, SmsService, "Отправка sms")
+Rel(NoticeService, NoticeRepository, "Сохранение/получение данных")
+Rel(NoticeRepository, NotificationDb, "Чтение и запись уведомлений")
+Rel(NoticeService, NotificationKafka, "Чтение событий", "Kafka")
+
+@enduml

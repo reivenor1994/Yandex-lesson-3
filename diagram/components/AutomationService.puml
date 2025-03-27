@@ -1,0 +1,27 @@
+@startuml
+
+!include ../C4_Component.puml
+
+title Диаграмма компонентов системы «Тёплый дом»
+
+Container_Boundary(AutomationService, "Automation Service") {
+    Component(AutomationController, "Automation Controller", "REST API", "Запросы управления сценариями")
+    Component(ScenarioService, "Scenario Service", "Бизнес-логика", "Выполнение сценариев")
+    Component(RuleService, "Rule Service", "Бизнес-логика", "Управление правилами")
+    Component(AutomationRepository, "Automation Repository", "Data Access", "Работа с данными автоматизации")
+}
+
+ContainerDb(AutomationDb, "Automation Database", "PostgreSQL", "Хранение правил сценариев работы с устройствами")
+ContainerQueue(EventKafka, "Event Kafka", "Apache Kafka", "Хранение событий")
+ContainerQueue(NotificationKafka, "Notification Kafka", "Apache Kafka", "Хранение сообщений об уведомлениях")
+
+Rel(AutomationController, RuleService, "Запросы управления правилами")
+Rel(RuleService, AutomationRepository, "Сохранение/получение правил")
+Rel(AutomationController, ScenarioService, "Запуск сценария для выполнения")
+Rel(RuleService, ScenarioService, "Передача правил для выполнения")
+Rel(ScenarioService, AutomationRepository, "Сохранение истории выполнения")
+Rel(AutomationRepository, AutomationDb, "Чтение и запись сценариев автоматизации")
+BiRel(ScenarioService, EventKafka, "Публикация команды сценария, получение результата выполнения команды")
+Rel(ScenarioService, NotificationKafka, "Публикация уведомлений")
+
+@enduml

@@ -1,0 +1,84 @@
+@startuml
+title Диаграмма кода системы «Тёплый дом»
+
+class AutomationController {
+  + createRule(RuleDTO): Response<Rule>
+  + updateRule(ruleId: UUID, RuleDTO): Response<Rule>
+  + deleteRule(ruleId: UUID): Response<Void>
+  + getRule(ruleId: UUID): Response<Rule>
+  + executeScenario(scenarioId: UUID): Response<ScenarioResult>
+}
+
+class RuleService {
+  + validateAndCreateRule(RuleDTO): Rule
+  + updateRule(ruleId: UUID, RuleDTO): Rule
+  + deleteRule(ruleId: UUID): void
+  + getRule(ruleId: UUID): Rule
+  + activateRule(ruleId: UUID): void
+}
+
+class ScenarioService {
+  + executeScenario(scenarioId: UUID): ScenarioResult
+  + handleDeviceEvent(event: DeviceEvent): void
+  + evaluateRulesForEvent(event: DeviceEvent): List<ScenarioExecution>
+  + sendNotification(notification: Notification): void
+}
+
+class AutomationRepository {
+  + saveRule(rule: Rule): Rule
+  + findRuleById(ruleId: UUID): Optional<Rule>
+  + deleteRule(ruleId: UUID): void
+  + findAllActiveRules(): List<Rule>
+  + saveScenarioExecution(execution: ScenarioExecution): void
+}
+
+class Rule {
+  + id: UUID
+  + name: String
+  + conditions: List<Condition>
+  + actions: List<Action>
+  + isActive: boolean
+}
+
+class ScenarioExecution {
+  + scenarioId: UUID
+  + executionTime: Instant
+  + status: ExecutionStatus
+  + results: Map<String, Object>
+}
+
+class DeviceEvent {
+  + deviceId: UUID
+  + eventType: String
+  + payload: Map<String, Object>
+  + timestamp: Instant
+}
+
+class Notification {
+  + userId: UUID
+  + message: String
+  + type: NotificationType
+  + timestamp: Instant
+}
+
+class EventKafka {
+    + topic : String
+}
+
+class NotificationKafka {
+    + topic : String
+}
+
+AutomationController --> RuleService : uses
+AutomationController --> ScenarioService : uses
+RuleService --> AutomationRepository : saves
+RuleService --> ScenarioService : triggers
+ScenarioService --> AutomationRepository : saves
+ScenarioService --> EventKafka : publishes
+ScenarioService --> NotificationKafka : publishes
+AutomationRepository --> Rule
+AutomationRepository --> ScenarioExecution
+ScenarioService --> DeviceEvent : processes
+ScenarioService --> Notification : creates
+
+@enduml

@@ -1,0 +1,108 @@
+@startuml
+
+!include ../C4_Container.puml
+
+title Диаграмма контейнеров системы «Тёплый дом»
+
+Person(User, "Пользователь")
+Person(Support, "Специалист службы поддержки")
+
+Container_Boundary(System, "Экосистема «Тёплый дом»") {
+
+' Веб-Сервисы
+Container(WebApp, "Web App", "React", "Веб-интерфейс")
+Container(MobileApp, "Mobile App", "React Native", "Мобильный интерфейс")
+Container(WebAppSupport, "Web App Support", "React", "Веб-интерфейс для техподдержки")
+
+Container(ApiGateway, "API Gateway", "Kong", "Маршрутизатор по микросервисам")
+Container(Debezium, "Debezium", "Java Spring Boot", "Отслеживание изменений в базе данных")
+
+' Сервисы
+Container(AuthService, "User Account Management", "Java Spring Boot", "Регистрация/аутентификация пользователей")
+Container(ClimateService, "Climate Service", "Java Spring Boot", "Управление климатом")
+Container(LightingService, "Lighting Service", "Java Spring Boot", "Управление освещением")
+Container(SecurityService, "Security Service", "Java Spring Boot", "Управление безопасностью")
+Container(AutomationService, "Automation Service", "Java Spring Boot", "Автоматизация")
+Container(MonitoringService, "Monitoring Service", "Java Spring Boot", "Мониторинг")
+Container(PaymentsService, "Payments Service", "Java Spring Boot", "Управление платежами")
+Container(NotificationService, "Notification Service", "Java Spring Boot", "Управление уведомлениями")
+
+' Очереди
+ContainerQueue(DebeziumKafka, "Debezium Kafka", "Apache Kafka", "Хранение сообщений об изменениях в БД")
+ContainerQueue(NotificationKafka, "Notification Kafka", "Apache Kafka", "Хранение сообщений об уведомлениях")
+ContainerQueue(EventKafka, "Event Kafka", "Apache Kafka", "Хранение событий")
+
+' Базы данных
+ContainerDb(AuthDb, "User Account Database", "PostgreSQL", "Данные пользователей")
+ContainerDb(ClimateDb, "Climate Database", "PostgreSQL", "Данные температуры, хранение настроек")
+ContainerDb(LightingDb, "Lighting Database", "PostgreSQL", "Состояние светильников")
+ContainerDb(SecurityDb, "Security Database", "PostgreSQL", "Данные с камер, состояние ворот")
+ContainerDb(AutomationDb, "Automation Database", "PostgreSQL", "Хранение правил сценариев работы с устройствами")
+ContainerDb(MonitoringDb, "Monitoring Database", "PostgreSQL", "История состояния устройств")
+ContainerDb(PaymentsDb, "Payments Database", "PostgreSQL", "Данные о платежах")
+ContainerDb(NotificationDb, "Notification Database", "PostgreSQL", "Данные об уведомлениях")
+}
+
+' Внешние системы
+System_Ext(Devices, "External devices (sensors)", "Датчики, объекты управления")
+System_Ext(PaymentSystem, "Payment System", "Обслуживание платежей")
+
+' Взаимодействия пользователей
+Rel(User, System, "подключение датчиков отопления, температуры и т.д")
+Rel(User, WebApp, "управление системой", "HTTPS")
+Rel(User, MobileApp, "управление системой", "HTTPS")
+Rel(Support, WebAppSupport, "оказание помощи в управлении системой", "HTTPS")
+
+' API Gateway
+Rel(WebApp, ApiGateway, "API запросы", "REST/HTTPS")
+Rel(MobileApp, ApiGateway, "API запросы", "REST/HTTPS")
+Rel(WebAppSupport, ApiGateway, "API запросы", "REST/HTTPS")
+
+' Основные сервисы
+Rel(ApiGateway, AuthService, "Запросы регистрация/аутентификации и управления профилем")
+Rel(ApiGateway, ClimateService, "Запросы управления климатом")
+Rel(ApiGateway, LightingService, "Запросы управления освещением")
+Rel(ApiGateway, SecurityService, "Запросы управления безопасностью")
+Rel(ApiGateway, AutomationService, "Запросы сценариев устройств")
+Rel(ApiGateway, MonitoringService, "Запросы истории состояния устройств")
+Rel(ApiGateway, PaymentsService, "Запросы управления платежами")
+
+' Базы данных сервисов
+Rel(AuthService, AuthDb, "Чтение и запись пользовательских данных")
+Rel(ClimateService, ClimateDb, "Чтение и запись данных климат-контроля")
+Rel(LightingService, LightingDb, "Чтение и запись данных освещения")
+Rel(SecurityService, SecurityDb, "Чтение и запись данных камер и ворот")
+Rel(AutomationService, AutomationDb, "Чтение и запись сценариев автоматизации")
+Rel(MonitoringService, MonitoringDb, "Чтение и запись истории состояний устройств")
+Rel(PaymentsService, PaymentsDb, "Чтение и запись платежей")
+Rel(NotificationService, NotificationDb, "Чтение и запись уведомлений")
+
+' Debezium - история изменений
+Rel(Debezium, AuthDb, "Отслеживание изменений в БД")
+Rel(Debezium, ClimateDb, "Отслеживание изменений в БД")
+Rel(Debezium, LightingDb, "Отслеживание изменений в БД")
+Rel(Debezium, SecurityDb, "Отслеживание изменений в БД")
+Rel(Debezium, DebeziumKafka, "Публикация изменений")
+Rel(DebeziumKafka, MonitoringService, "Получение изменений")
+
+' Уведомления
+Rel(ClimateService, NotificationKafka, "Публикация уведомлений")
+Rel(LightingService, NotificationKafka, "Публикация уведомлений")
+Rel(SecurityService, NotificationKafka, "Публикация уведомлений")
+Rel(AutomationService, NotificationKafka, "Публикация уведомлений")
+Rel(PaymentsService, NotificationKafka, "Публикация уведомлений")
+Rel(NotificationKafka, NotificationService, "Получение уведомлений")
+Rel(NotificationService, WebApp, "Отправка уведомлений")
+Rel(NotificationService, MobileApp, "Отправка уведомлений")
+
+' Сценарии
+BiRel(AutomationService, EventKafka, "Публикация команды сценария, получение результата выполнения команды")
+BiRel(EventKafka, ClimateService, "Получение команды и отправка ответа о её выполнении")
+BiRel(EventKafka, LightingService, "Получение команды и отправка ответа о её выполнении")
+BiRel(EventKafka, SecurityService, "Получение команды и отправка ответа о её выполнении")
+
+' Внешние взаимодействия
+Rel(PaymentsService, PaymentSystem, "Оплата подписки на систему", "HTTPS")
+Rel(System, Devices, "Управление устройствами (датчиками)")
+
+@enduml
