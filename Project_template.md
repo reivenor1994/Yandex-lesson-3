@@ -104,29 +104,50 @@
 
 ### 5. Визуализация контекста системы — диаграмма С4
 
-файл monolith.puml
+файл Monolith.puml
 
-```markdown
-[Ссылка на диаграмму](https://ya.ru/)
-```
+[Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/monolith/Monolith.puml)
 
 # Задание 2. Проектирование микросервисной архитектуры
 
 **Диаграмма контейнеров (Containers)**
 
-файл containers.puml
+файл Containers.puml
+
+[Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/containers/Containers.puml)
+
 
 **Диаграмма компонентов (Components)**
 
 файлы в папке components
 
+AuthService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/AuthService.puml)
+
+AutomationService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/AutomationService.puml)
+
+ClimateService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/ClimateService.puml)
+
+LightingService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/LightingService.puml)
+
+MonitoringService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/MonitoringService.puml)
+
+NotificationService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/NotificationService.puml)
+
+PaymentsService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/PaymentsService.puml)
+
+SecurityService.puml [Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/components/SecurityService.puml)
+
 **Диаграмма кода (Code)**
 
-файл AutomationServiceCodes
+файл AutomationServiceCodes.puml
+
+[Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/codes/AutomationServiceCodes.puml)
 
 # Задание 3. Разработка ER-диаграммы
 
-Добавьте сюда ER-диаграмму. Она должна отражать ключевые сущности системы, их атрибуты и тип связей между ними.
+файл ErDiagram.puml
+
+[Ссылка на диаграмму](https://github.com/reivenor1994/Yandex-lesson-3/blob/warmhouse/diagram/er/ErDiagram.puml)
 
 # ❌ Задание 4. Создание и документирование API
 

@@ -2,7 +2,7 @@
 
 !include ../C4_Component.puml
 
-title Диаграмма компонента системы «Тёплый дом»
+title Диаграмма компонентов системы «Тёплый дом»
 
 Container_Boundary(SecurityService, "Security Service") {
     Component(SecurityController, "Security Controller", "REST API", "Запросы управления безопасностью")

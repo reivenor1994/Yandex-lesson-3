@@ -2,7 +2,7 @@
 
 !include ../C4_Component.puml
 
-title Диаграмма компонента системы «Тёплый дом»
+title Диаграмма компонентов системы «Тёплый дом»
 
 Container_Boundary(AutomationService, "Automation Service") {
     Component(AutomationController, "Automation Controller", "REST API", "Запросы управления сценариями")

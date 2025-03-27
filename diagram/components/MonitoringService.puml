@@ -2,7 +2,7 @@
 
 !include ../C4_Component.puml
 
-title Диаграмма компонента системы «Тёплый дом»
+title Диаграмма компонентов системы «Тёплый дом»
 
 Container_Boundary(MonitoringService, "Monitoring Service") {
     Component(MonitoringController, "Monitoring Controller", "REST API", "Запросы истории телеметрии")

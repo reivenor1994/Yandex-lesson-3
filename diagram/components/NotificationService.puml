@@ -2,7 +2,7 @@
 
 !include ../C4_Component.puml
 
-title Диаграмма компонента системы «Тёплый дом»
+title Диаграмма компонентов системы «Тёплый дом»
 
 Container_Boundary(NotificationService, "Notification Service") {
     Component(NotificationController, "Notification Controller", "REST API", "Запросы управления уведомлениями")
